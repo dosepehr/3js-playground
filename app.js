@@ -12,8 +12,12 @@ const cube = new THREE.Mesh(geometry, material);
 //position
 cube.position.set(0.7, -0.6, 1);
 //scale
-cube.scale.set(0.1,0.1,0.1)
-
+cube.scale.set(0.5, 0.5, 0.5);
+// rotation
+// pi ==> half a rotation
+cube.rotation.reorder('YXZ');
+cube.rotation.x = 3.14 + 0.25;
+cube.rotation.y = 3.14 + 0.25;
 scene.add(cube);
 
 // axes helper
