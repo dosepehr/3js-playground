@@ -6,10 +6,7 @@ const scene = new THREE.Scene();
 
 // cube
 const group = new THREE.Group();
-group.position.y = 1;
 scene.add(group);
-group.scale.y = 1;
-group.rotation.y = 1;
 const cube1 = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1),
     new THREE.MeshBasicMaterial({ color: '#ff0' })
@@ -25,8 +22,6 @@ const cube3 = new THREE.Mesh(
 cube2.position.x = -2;
 cube3.position.x = 2;
 group.add(cube1);
-group.add(cube2);
-group.add(cube3);
 
 // axes helper
 
@@ -51,5 +46,19 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 renderer.setSize(sizes.width, sizes.height);
+let time = Date.now();
 
-renderer.render(scene, camera);
+const tick = () => {
+    let currentTime = Date.now();
+    const delta = currentTime - time;
+    time = currentTime;
+    console.log(delta);
+    // update objects
+    cube1.rotation.x += 0.01 * delta;
+
+    // render
+    renderer.render(scene, camera);
+
+    window.requestAnimationFrame(tick);
+};
+tick();
