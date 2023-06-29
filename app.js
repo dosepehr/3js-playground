@@ -22,6 +22,11 @@ cube.position.normalize(); // makes cube length 1
 cube.position.set(1, -1, 1); // do all three vectors
 scene.add(cube);
 
+// axes helper
+
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper); //red -> x , green -> y , blue-> z
+
 // camera
 const sizes = {
     width: 800,
