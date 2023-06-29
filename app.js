@@ -33,7 +33,9 @@ const sizes = {
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 camera.position.z = 3; //we must pull up camera to see cube
 scene.add(camera);
-
+// look at
+// camera.lookAt(new THREE.Vector3(0, -1, 0));
+camera.lookAt(cube.position);
 // rendered
 const canvas = document.querySelector('.webgl');
 const renderer = new THREE.WebGLRenderer({
