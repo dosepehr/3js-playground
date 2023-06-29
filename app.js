@@ -5,20 +5,28 @@ import * as THREE from 'three';
 const scene = new THREE.Scene();
 
 // cube
-const geometry = new THREE.BoxGeometry(1, 1, 1); //width,height,depth
-const material = new THREE.MeshBasicMaterial({ color: '#ff00ff' });
-const cube = new THREE.Mesh(geometry, material);
-
-//position
-cube.position.set(0.7, -0.6, 1);
-//scale
-cube.scale.set(0.5, 0.5, 0.5);
-// rotation
-// pi ==> half a rotation
-cube.rotation.reorder('YXZ');
-cube.rotation.x = 3.14 + 0.25;
-cube.rotation.y = 3.14 + 0.25;
-scene.add(cube);
+const group = new THREE.Group();
+group.position.y = 1;
+scene.add(group);
+group.scale.y = 1;
+group.rotation.y = 1;
+const cube1 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: '#ff0' })
+);
+const cube2 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: '#f0f' })
+);
+const cube3 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: '#0ff' })
+);
+cube2.position.x = -2;
+cube3.position.x = 2;
+group.add(cube1);
+group.add(cube2);
+group.add(cube3);
 
 // axes helper
 
@@ -35,7 +43,7 @@ camera.position.z = 3; //we must pull up camera to see cube
 scene.add(camera);
 // look at
 // camera.lookAt(new THREE.Vector3(0, -1, 0));
-camera.lookAt(cube.position);
+
 // rendered
 const canvas = document.querySelector('.webgl');
 const renderer = new THREE.WebGLRenderer({
