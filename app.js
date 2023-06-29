@@ -17,6 +17,7 @@ const sizes = {
     height: 600,
 };
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+camera.position.z = 3; //we must pull up camera to see cube
 scene.add(camera);
 
 // rendered
