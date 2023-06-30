@@ -1,17 +1,9 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /**
  * cursor
  */
-
-const cursor = {
-    x: 0,
-    y: 0,
-};
-window.onmousemove = (e) => {
-    cursor.x = e.clientX / sizes.width - 0.5;
-    cursor.y = -(e.clientY / sizes.height - 0.5);
-};
 
 // scene
 
@@ -43,6 +35,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     100
 );
+// controlls
 
 camera.position.set(0, 0, 2);
 scene.add(camera);
@@ -53,18 +46,18 @@ const renderer = new THREE.WebGLRenderer({
     canvas,
 });
 
+const controls = new OrbitControls(camera, canvas);
+// controls.target.y = 2;
+controls.enableDamping = true;
 renderer.setSize(sizes.width, sizes.height);
 
 const clock = new THREE.Clock();
 const tick = () => {
-    camera.position.x = Math.sin(cursor.x + Math.PI * 2) * 3;
-    camera.position.z = Math.cos(cursor.x + Math.PI * 2) * 3;
-    camera.position.y = cursor.y * 3;
-    camera.lookAt(cube1.position);
     const elapsedTime = clock.getElapsedTime();
     // render
     // cube1.rotation.y = elapsedTime;
     renderer.render(scene, camera);
+    controls.update();
 
     window.requestAnimationFrame(tick);
 };
