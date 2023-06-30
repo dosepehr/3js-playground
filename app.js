@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
+import { handleResize } from './helpers/resize';
 /**
  * cursor
  */
@@ -26,8 +26,11 @@ scene.add(axesHelper); //red -> x , green -> y , blue-> z
 
 // camera
 const sizes = {
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
+};
+window.onresize = () => {
+    handleResize(sizes, camera, renderer);
 };
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -35,7 +38,6 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     100
 );
-// controlls
 
 camera.position.set(0, 0, 2);
 scene.add(camera);
@@ -46,6 +48,7 @@ const renderer = new THREE.WebGLRenderer({
     canvas,
 });
 
+// controll
 const controls = new OrbitControls(camera, canvas);
 // controls.target.y = 2;
 controls.enableDamping = true;
