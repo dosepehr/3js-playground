@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { handleResize } from './helpers/resize';
+import { handleResize, handleFullscreen } from './helpers/resize';
 /**
  * cursor
  */
@@ -31,6 +31,9 @@ const sizes = {
 };
 window.onresize = () => {
     handleResize(sizes, camera, renderer);
+};
+window.ondblclick = () => {
+    handleFullscreen(canvas);
 };
 const camera = new THREE.PerspectiveCamera(
     75,
