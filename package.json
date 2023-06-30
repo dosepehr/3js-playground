@@ -1,6 +1,20 @@
 {
-  "dependencies": {
-    "gsap": "^3.12.2",
-    "three": "^0.154.0"
-  }
+    "dependencies": {
+        "gsap": "^3.12.2",
+        "three": "^0.154.0"
+    },
+    "name": "basic-scene",
+    "version": "1.0.0",
+    "main": "app.js",
+    "devDependencies": {
+        "vite": "^4.3.9"
+    },
+    "scripts": {
+        "dev": "vite"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
 }
+
