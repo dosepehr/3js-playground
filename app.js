@@ -4,6 +4,24 @@ import { handleResize, handleFullscreen } from './helpers/resize';
 import { gsap } from 'gsap';
 import * as dat from 'dat.gui';
 
+/**
+ * Textures
+ */
+
+const textureLoader = new THREE.TextureLoader();
+const texture = textureLoader.load(
+    '/textures/door/color.jpg',
+    () => {
+        console.log('load');
+    },
+    () => {
+        console.log('progress');
+    },
+    () => {
+        console.log('err');
+    }
+);
+
 // scene
 const scene = new THREE.Scene();
 let parameters = {
@@ -18,7 +36,7 @@ let parameters = {
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const c1Material = new THREE.MeshBasicMaterial({ color: parameters.color });
+const c1Material = new THREE.MeshBasicMaterial({ map: texture });
 const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), c1Material);
 
 group.add(cube1);
@@ -62,7 +80,7 @@ controls.enableDamping = true;
 renderer.setSize(sizes.width, sizes.height);
 
 // debug
-const gui = new dat.GUI({ closed: true, width: 400 });  //https://jsfiddle.net/ikatyang/182ztwao
+const gui = new dat.GUI({ closed: true, width: 400 }); //https://jsfiddle.net/ikatyang/182ztwao
 gui.add(cube1.position, 'y', 0, 5, 0.5); //object,propert,min,max,step
 gui.add(cube1.position, 'x').min(-3).max(3).step(0.5).name('x axis');
 
