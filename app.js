@@ -8,20 +8,30 @@ import * as dat from 'dat.gui';
  * Textures
  */
 
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load(
-    '/textures/door/color.jpg',
-    () => {
-        console.log('load');
-    },
-    () => {
-        console.log('progress');
-    },
-    () => {
-        console.log('err');
-    }
-);
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onStart = () => {
+    console.log('start');
+};
 
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load('/textures/door/color.jpg');
+// colorTexture.repeat.x = 2;
+// colorTexture.repeat.y = 3;
+
+// colorTexture.wrapS = THREE.RepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+
+// colorTexture.wrapS = THREE.MirroredRepeatWrapping;
+// colorTexture.wrapT = THREE.MirroredRepeatWrapping;
+
+// colorTexture.offset.x = 0.5;
+// colorTexture.offset.y = 0.5;
+// colorTexture.minFilter=THREE.NearestFilter //when texture is big
+// colorTexture.magFilter = THREE.NearestFilter; // makes texture sharp
+
+colorTexture.rotation = Math.PI * 0.5;
+colorTexture.center.x = 0.5;
+colorTexture.center.y = 0.5;
 // scene
 const scene = new THREE.Scene();
 let parameters = {
@@ -36,7 +46,7 @@ let parameters = {
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const c1Material = new THREE.MeshBasicMaterial({ map: texture });
+const c1Material = new THREE.MeshBasicMaterial({ map: colorTexture });
 const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), c1Material);
 
 group.add(cube1);
