@@ -1,55 +1,52 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { handleResize, handleFullscreen } from './helpers/resize';
+import { parameters } from './helpers/parameters';
 import { gsap } from 'gsap';
 import * as dat from 'dat.gui';
 
 /**
  * Textures
  */
+const textureLoader = new THREE.TextureLoader();
 
-const loadingManager = new THREE.LoadingManager();
-loadingManager.onStart = () => {
-    console.log('start');
-};
-
-const textureLoader = new THREE.TextureLoader(loadingManager);
-const colorTexture = textureLoader.load('/textures/door/color.jpg');
-// colorTexture.repeat.x = 2;
-// colorTexture.repeat.y = 3;
-
-// colorTexture.wrapS = THREE.RepeatWrapping
-// colorTexture.wrapT = THREE.RepeatWrapping
-
-// colorTexture.wrapS = THREE.MirroredRepeatWrapping;
-// colorTexture.wrapT = THREE.MirroredRepeatWrapping;
-
-// colorTexture.offset.x = 0.5;
-// colorTexture.offset.y = 0.5;
-// colorTexture.minFilter=THREE.NearestFilter //when texture is big
-// colorTexture.magFilter = THREE.NearestFilter; // makes texture sharp
-
-colorTexture.rotation = Math.PI * 0.5;
-colorTexture.center.x = 0.5;
-colorTexture.center.y = 0.5;
+const doorColorTexture = textureLoader.load('./textures/door/color.jpg');
+const doorAlphaTexture = textureLoader.load('./textures/door/Alpha.jpg');
+const doorAmbientOcclusionTexture = textureLoader.load(
+    './textures/door/ambientOcclusion.jpg'
+);
+const doorHeightTexture = textureLoader.load('./textures/door/Height.jpg');
+const doorNormalTexture = textureLoader.load('./textures/door/Normal.jpg');
+const doorMetalnessTexture = textureLoader.load(
+    './textures/door/Metalness.jpg'
+);
+const doorRoughnessTexture = textureLoader.load(
+    './textures/door/Roughness.jpg'
+);
+const matcapTexture = textureLoader.load('./textures/minecraft.png');
+const gradintTexture = textureLoader.load('./textures/gradients/3.jpg');
 // scene
 const scene = new THREE.Scene();
-let parameters = {
-    color: '#f0f',
-    spin: () => {
-        gsap.to(cube1.rotation, {
-            y: cube1.rotation.y + Math.PI * 2,
-            duration: 1,
-        });
-    },
-};
+
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const c1Material = new THREE.MeshBasicMaterial({ map: colorTexture });
-const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), c1Material);
+const material = new THREE.MeshBasicMaterial({
+    map: doorColorTexture,
+});
 
-group.add(cube1);
+material.opacity = 0.5;
+material.transparent = true; 
+
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+const torus = new THREE.Mesh(
+    new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+    material
+);
+sphere.position.x = -1.5;
+torus.position.x = 1.5;
+group.add(sphere, plane, torus);
 
 // axes helper
 
@@ -90,20 +87,29 @@ controls.enableDamping = true;
 renderer.setSize(sizes.width, sizes.height);
 
 // debug
-const gui = new dat.GUI({ closed: true, width: 400 }); //https://jsfiddle.net/ikatyang/182ztwao
-gui.add(cube1.position, 'y', 0, 5, 0.5); //object,propert,min,max,step
-gui.add(cube1.position, 'x').min(-3).max(3).step(0.5).name('x axis');
+// const gui = new dat.GUI({ closed: true, width: 400 }); //https://jsfiddle.net/ikatyang/182ztwao
+// gui.add(cube1.position, 'y', 0, 5, 0.5); //object,propert,min,max,step
+// gui.add(cube1.position, 'x').min(-3).max(3).step(0.5).name('x axis');
 
-gui.add(cube1, 'visible');
+// gui.add(cube1, 'visible');
 
-gui.add(c1Material, 'wireframe');
+// gui.add(c1Material, 'wireframe');
 
-gui.addColor(parameters, 'color').onChange(() => {
-    c1Material.color.set(parameters.color);
-});
-gui.add(parameters, 'spin');
-
+// gui.addColor(parameters, 'color').onChange(() => {
+//     c1Material.color.set(parameters.color);
+// });
+// gui.add(parameters, 'spin');
+const clock = new THREE.Clock();
 const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+    // update object
+    sphere.rotation.y = 0.1 * elapsedTime;
+    plane.rotation.y = 0.1 * elapsedTime;
+    torus.rotation.y = 0.1 * elapsedTime;
+    sphere.rotation.x = 0.15 * elapsedTime;
+    plane.rotation.x = 0.15 * elapsedTime;
+    torus.rotation.x = 0.15 * elapsedTime;
+
     // render
     renderer.render(scene, camera);
     controls.update();
