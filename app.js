@@ -31,12 +31,8 @@ const scene = new THREE.Scene();
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const material = new THREE.MeshBasicMaterial({
-    map: doorColorTexture,
-});
-
-material.opacity = 0.5;
-material.transparent = true; 
+const material = new THREE.MeshNormalMaterial();
+material.flatShading = true;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
