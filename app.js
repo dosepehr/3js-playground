@@ -23,7 +23,7 @@ const doorMetalnessTexture = textureLoader.load(
 const doorRoughnessTexture = textureLoader.load(
     './textures/door/Roughness.jpg'
 );
-const matcapTexture = textureLoader.load('./textures/minecraft.png');
+const matcapTexture = textureLoader.load('./textures/matcaps/3.png');
 const gradintTexture = textureLoader.load('./textures/gradients/3.jpg');
 // scene
 const scene = new THREE.Scene();
@@ -31,8 +31,8 @@ const scene = new THREE.Scene();
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const material = new THREE.MeshNormalMaterial();
-material.flatShading = true;
+const material = new THREE.MeshMatcapMaterial();
+material.matcap = matcapTexture;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
