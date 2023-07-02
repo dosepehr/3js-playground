@@ -9,7 +9,7 @@ import * as dat from 'dat.gui';
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-
+const cubeTextureLoader = new THREE.CubeTextureLoader();
 const doorColorTexture = textureLoader.load('./textures/door/color.jpg');
 const doorAlphaTexture = textureLoader.load('./textures/door/Alpha.jpg');
 const doorAmbientOcclusionTexture = textureLoader.load(
@@ -41,16 +41,16 @@ scene.add(group);
 const material = new THREE.MeshStandardMaterial();
 material.metalness = 0.7;
 material.roughness = 0.2;
-material.map = doorColorTexture;
-material.aoMap = doorAmbientOcclusionTexture;
-material.displacementMap = doorHeightTexture;
-material.displacementScale = 0.05;
-material.metalnessMap = doorMetalnessTexture;
-material.roughnessMap = doorRoughnessTexture;
-material.normalMap = doorNormalTexture;
-material.normalScale.set(0.5, 0.5);
-material.alphaMap = doorAlphaTexture;
-material.transparent = true;
+
+const envMapTexture = cubeTextureLoader.load([
+    '/textures/environmentMaps/3/px.jpg',
+    '/textures/environmentMaps/3/nx.jpg',
+    '/textures/environmentMaps/3/py.jpg',
+    '/textures/environmentMaps/3/nx.jpg',
+    '/textures/environmentMaps/3/pz.jpg',
+    '/textures/environmentMaps/3/nx.jpg',
+]);
+material.envMap = envMapTexture;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 100, 100), material);
