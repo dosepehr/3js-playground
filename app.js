@@ -27,13 +27,19 @@ const matcapTexture = textureLoader.load('./textures/matcaps/3.png');
 const gradintTexture = textureLoader.load('./textures/gradients/3.jpg');
 // scene
 const scene = new THREE.Scene();
+/**
+ * lights
+ */
+const ambientLight = new THREE.AmbientLight('#fff', 0.5);
+const pointLight = new THREE.PointLight('#fff', 0.5);
+pointLight.position.set(2, 3, 4);
+scene.add(ambientLight, pointLight);
 
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const material = new THREE.MeshMatcapMaterial();
-material.matcap = matcapTexture;
-
+const material = new THREE.MeshToonMaterial();
+material.gradientMap=gradintTexture
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
 const torus = new THREE.Mesh(
