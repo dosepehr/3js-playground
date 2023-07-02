@@ -38,17 +38,43 @@ scene.add(ambientLight, pointLight);
 // cube
 const group = new THREE.Group();
 scene.add(group);
-const material = new THREE.MeshToonMaterial();
-material.gradientMap=gradintTexture
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+const material = new THREE.MeshStandardMaterial();
+material.metalness = 0.7;
+material.roughness = 0.2;
+material.map = doorColorTexture;
+material.aoMap = doorAmbientOcclusionTexture;
+material.displacementMap = doorHeightTexture;
+material.displacementScale = 0.05;
+material.metalnessMap = doorMetalnessTexture;
+material.roughnessMap = doorRoughnessTexture;
+material.normalMap = doorNormalTexture;
+material.normalScale.set(0.5, 0.5);
+material.alphaMap = doorAlphaTexture;
+material.transparent = true;
+
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 100, 100), material);
 const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+    new THREE.TorusGeometry(0.3, 0.2, 64, 128),
     material
 );
 sphere.position.x = -1.5;
 torus.position.x = 1.5;
 group.add(sphere, plane, torus);
+
+// uv2
+sphere.geometry.setAttribute(
+    'uv2',
+    new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
+);
+plane.geometry.setAttribute(
+    'uv2',
+    new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2)
+);
+torus.geometry.setAttribute(
+    'uv2',
+    new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
+);
 
 // axes helper
 
@@ -89,18 +115,12 @@ controls.enableDamping = true;
 renderer.setSize(sizes.width, sizes.height);
 
 // debug
-// const gui = new dat.GUI({ closed: true, width: 400 }); //https://jsfiddle.net/ikatyang/182ztwao
-// gui.add(cube1.position, 'y', 0, 5, 0.5); //object,propert,min,max,step
-// gui.add(cube1.position, 'x').min(-3).max(3).step(0.5).name('x axis');
+const gui = new dat.GUI({ closed: true, width: 400 }); //https://jsfiddle.net/ikatyang/182ztwao
+gui.add(material, 'metalness').min(0).max(1).step(0.0001);
+gui.add(material, 'roughness').min(0).max(1).step(0.0001);
+gui.add(material, 'aoMapIntensity').min(0).max(10).step(0.001);
+gui.add(material, 'displacementScale').min(0).max(1).step(0.001);
 
-// gui.add(cube1, 'visible');
-
-// gui.add(c1Material, 'wireframe');
-
-// gui.addColor(parameters, 'color').onChange(() => {
-//     c1Material.color.set(parameters.color);
-// });
-// gui.add(parameters, 'spin');
 const clock = new THREE.Clock();
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
