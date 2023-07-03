@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { handleResize, handleFullscreen } from './helpers/resize';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as dat from 'dat.gui';
 const canvas = document.querySelector('canvas');
 
 window.onresize = () => {
@@ -9,9 +10,28 @@ window.onresize = () => {
 window.ondblclick = () => {
     handleFullscreen(canvas);
 };
-const scene = new THREE.Scene();
-const material = new THREE.MeshBasicMaterial();
+/**
+ * !lights
+ */
 
+// const ambientLight = new THREE.AmbientLight('white', 0.5);
+// const directionalLight = new THREE.DirectionalLight('#0f0', 0.5);
+// const hemisphereLight = new THREE.HemisphereLight(0xff0000, 0x0000ff, 0.3);
+// const pointLight = new THREE.PointLight('#ff9000', 0.3, 10, 0.1);
+// const rectAreaLight = new THREE.RectAreaLight('#4e00ff', 2, 1, 1);
+const spotlight = new THREE.SpotLight(
+    '#78ff00',
+    0.5,
+    10,
+    Math.PI * 0.1,
+    0.25,
+    1
+);
+const scene = new THREE.Scene();
+scene.add(spotlight);
+
+const material = new THREE.MeshStandardMaterial();
+material.roughness = 0.4;
 const cubeGeometry = new THREE.BoxGeometry(0.75, 0.75, 0.75);
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 32, 64);
@@ -42,9 +62,18 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 
 renderer.setSize(sizes.width, sizes.height);
 
+const gui = new dat.GUI();
+
 const clock = new THREE.Clock();
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
+    donut.rotation.x = elapsedTime * 0.5;
+    cube.rotation.x = elapsedTime * 0.5;
+    sphere.rotation.x = elapsedTime * 0.5;
+
+    donut.rotation.y = elapsedTime * 0.5;
+    cube.rotation.y = elapsedTime * 0.5;
+    sphere.rotation.y = elapsedTime * 0.5;
 
     // render
     renderer.render(scene, camera);
