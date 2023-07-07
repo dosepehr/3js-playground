@@ -8,6 +8,7 @@ const scene = new THREE.Scene();
 
 const textureLoader = new THREE.TextureLoader();
 const bakedShadow = textureLoader.load('/textures/baked/bakedShadow.jpg');
+const simpleShadow = textureLoader.load('/textures/baked/simpleShadow.jpg');
 
 window.onresize = () => {
     handleResize(sizes, camera, renderer);
@@ -56,16 +57,23 @@ const planeGeometry = new THREE.PlaneGeometry(5, 5);
 const sphere = new THREE.Mesh(sphereGeometry, material);
 sphere.castShadow = true;
 // const donut = new THREE.Mesh(donutGeometry, material);
-const plane = new THREE.Mesh(
-    planeGeometry,
-    new THREE.MeshBasicMaterial({
-        map: bakedShadow,
-    })
-);
+const plane = new THREE.Mesh(planeGeometry, material);
 plane.receiveShadow = true;
 
 plane.rotation.x = -Math.PI * 0.5;
 plane.position.y = -1;
+
+const sphereShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5, 1.5),
+    new THREE.MeshBasicMaterial({
+        color: '#000',
+        transparent: true,
+        alphaMap: simpleShadow,
+    })
+);
+sphereShadow.rotation.x = -Math.PI * 0.5;
+sphereShadow.position.y = plane.position.y + 0.01;
+scene.add(sphereShadow);
 
 const sizes = {
     width: window.innerWidth,
@@ -95,9 +103,15 @@ gui.add(directionalLight, 'castShadow');
 const clock = new THREE.Clock();
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
-    sphere.rotation.x = elapsedTime * 0.5;
-    sphere.rotation.y = elapsedTime * 0.5;
+    // update the sphere
+    sphere.position.x = Math.cos(elapsedTime) * 1.5;
+    sphere.position.z = Math.sin(elapsedTime) * 1.5;
+    sphere.position.y = Math.abs(Math.sin(elapsedTime) * 3);
 
+    // update the shadow
+    sphereShadow.position.x = sphere.position.x;
+    sphereShadow.position.z = sphere.position.z;
+    sphereShadow.material.opacity = (1 - Math.abs(sphere.position.y)) * 0.5;
     // render
     renderer.render(scene, camera);
     controls.update();
