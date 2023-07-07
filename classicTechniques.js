@@ -31,9 +31,18 @@ spotLight.shadow.mapSize.width = 1024;
 spotLight.shadow.mapSize.height = 1024;
 spotLight.castShadow = true;
 spotLight.position.set(0, 2, 2);
-const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-scene.add(spotLightCameraHelper);
 scene.add(spotLight, spotLight.target);
+
+const pointLight = new THREE.PointLight('#fff', 0.3);
+pointLight.castShadow = true;
+pointLight.position.set(-1, 1, 0);
+pointLight.shadow.mapSize.width = 1024;
+pointLight.shadow.mapSize.height = 1024;
+
+pointLight.shadow.camera.near = 0.1;
+pointLight.shadow.camera.far = 5;
+scene.add(pointLight);
+
 scene.add(ambientLight, directionalLight);
 
 const material = new THREE.MeshStandardMaterial();
