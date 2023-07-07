@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as dat from 'dat.gui';
 const canvas = document.querySelector('canvas');
 
+const scene = new THREE.Scene();
+
 window.onresize = () => {
     handleResize(sizes, camera, renderer);
 };
@@ -14,22 +16,26 @@ window.ondblclick = () => {
  * !lights
  */
 
-const ambientLight = new THREE.AmbientLight('white', 0.5);
-const directionalLight = new THREE.DirectionalLight('#fff', 0.5);
+const ambientLight = new THREE.AmbientLight('white', 0.4);
+const directionalLight = new THREE.DirectionalLight('#fff', 0.4);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
-
 directionalLight.position.set(2, 2, -1);
-const scene = new THREE.Scene();
-scene.add(ambientLight, directionalLight);
-const directionalLightCameraHelper = new THREE.CameraHelper(
-    directionalLight.shadow.camera
-);
 directionalLight.shadow.camera.near = 1;
 directionalLight.shadow.camera.far = 2000;
 directionalLight.shadow.camera.bottom = -2;
-scene.add(directionalLightCameraHelper);
+
+const spotLight = new THREE.SpotLight('#fff', 0.4, 10, Math.PI * 0.3);
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+spotLight.castShadow = true;
+spotLight.position.set(0, 2, 2);
+const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+scene.add(spotLightCameraHelper);
+scene.add(spotLight, spotLight.target);
+scene.add(ambientLight, directionalLight);
+
 const material = new THREE.MeshStandardMaterial();
 material.roughness = 0.4;
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
