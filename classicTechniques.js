@@ -6,6 +6,9 @@ const canvas = document.querySelector('canvas');
 
 const scene = new THREE.Scene();
 
+const textureLoader = new THREE.TextureLoader();
+const bakedShadow = textureLoader.load('/textures/baked/bakedShadow.jpg');
+
 window.onresize = () => {
     handleResize(sizes, camera, renderer);
 };
@@ -53,7 +56,12 @@ const planeGeometry = new THREE.PlaneGeometry(5, 5);
 const sphere = new THREE.Mesh(sphereGeometry, material);
 sphere.castShadow = true;
 // const donut = new THREE.Mesh(donutGeometry, material);
-const plane = new THREE.Mesh(planeGeometry, material);
+const plane = new THREE.Mesh(
+    planeGeometry,
+    new THREE.MeshBasicMaterial({
+        map: bakedShadow,
+    })
+);
 plane.receiveShadow = true;
 
 plane.rotation.x = -Math.PI * 0.5;
@@ -73,7 +81,7 @@ controls.enableDamping = true;
 
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(sizes.width, sizes.height);
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = false;
 
 const gui = new dat.GUI();
 gui.add(directionalLight, 'intensity').min(0).max(1).step(0.001);
