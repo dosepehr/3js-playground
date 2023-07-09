@@ -48,6 +48,16 @@ const sizes = {
 };
 
 /**
+ * mouse
+ */
+
+const mouse = new THREE.Vector2();
+window.onmousemove = (e) => {
+    mouse.x = (e.clientX / sizes.width) * 2 - 1;
+    mouse.y = -(e.clientY / sizes.height) * 2 + 1;
+};
+
+/**
  * Camera
  */
 // Base camera
@@ -86,18 +96,17 @@ const tick = () => {
     object2.position.y = Math.sin(elapsedTime * 0.8) * 1.5;
     object3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
 
-    const rayOrigin = new THREE.Vector3(-3, 0, 0);
-    const rayDirection = new THREE.Vector3(1, 0, 0);
-    rayDirection.normalize();
-    raycaster.set(rayOrigin, rayDirection);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(objects);
     for (const object of objects) {
         object.material.color.set('#f00');
     }
+    // Update controls
     for (const intersect of intersects) {
         intersect.object.material.color.set('#00f');
     }
-    // Update controls
+
     controls.update();
 
     // Render
