@@ -86,6 +86,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Animate
  */
+
+window.onclick = () => {
+    if (currentIntersect) {
+        if (currentIntersect.object === object1) {
+            console.log('click on object1');
+        }
+    }
+};
+
 const clock = new THREE.Clock();
 let currentIntersect = null;
 const tick = () => {
@@ -115,8 +124,8 @@ const tick = () => {
         currentIntersect = intersects[0];
     } else {
         if (currentIntersect) {
-        console.log('mouse leave');
-    }
+            console.log('mouse leave');
+        }
         currentIntersect = null;
     }
 
