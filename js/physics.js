@@ -3,12 +3,19 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as dat from 'dat.gui';
 import cannon from 'cannon';
 
-console.log(cannon);
 /**
  * Debug
  */
+const parameters = {};
+parameters.createSphere = () => {
+    createSphere(Math.random() * 0.5, {
+        x: (Math.random() - 0.5) * 3,
+        y: 3,
+        z: (Math.random() - 0.5) * 3,
+    });
+};
 const gui = new dat.GUI();
-
+gui.add(parameters, 'createSphere');
 /**
  * Base
  */
