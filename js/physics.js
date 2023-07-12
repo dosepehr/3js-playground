@@ -36,18 +36,6 @@ const environmentMapTexture = cubeTextureLoader.load([
 /**
  * Test sphere
  */
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 32, 32),
-    new THREE.MeshStandardMaterial({
-        metalness: 0.3,
-        roughness: 0.4,
-        envMap: environmentMapTexture,
-        envMapIntensity: 0.5,
-    })
-);
-sphere.castShadow = true;
-sphere.position.y = 0.5;
-scene.add(sphere);
 
 /**
  * Floor
@@ -112,27 +100,15 @@ window.addEventListener('resize', () => {
 const world = new cannon.World();
 world.gravity.set(0, -9.82, 0);
 // sphere
-const sphereShape = new cannon.Sphere(0.5);
-const sphereBody = new cannon.Body({
-    mass: 1,
-    position: new cannon.Vec3(0, 3, 0),
-    shape: sphereShape,
-});
-sphereBody.applyLocalForce(
-    new cannon.Vec3(150, 0, 0),
-    new cannon.Vec3(0, 0, 0)
-);
 
 const floorShape = new cannon.Plane();
 const floorBody = new cannon.Body({ mass: 0, shape: floorShape });
 floorBody.quaternion.setFromAxisAngle(new cannon.Vec3(-1, 0, 0), Math.PI * 0.5);
 world.addBody(floorBody);
-world.addBody(sphereBody);
 
 // material
 const concreteMaterial = new cannon.Material('concrete');
 const plasticMaterial = new cannon.Material('plastic');
-sphereBody.material = plasticMaterial;
 floorBody.material = concreteMaterial;
 const concretePlastciContcatMaterial = new cannon.ContactMaterial(
     concreteMaterial,
@@ -169,6 +145,32 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+const createSphere = (radius, position) => {
+    // 3js part
+    const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(radius, 20, 20),
+        new THREE.MeshStandardMaterial({
+            metalness: 0.3,
+            roughness: 0.4,
+            envMap: environmentMapTexture,
+        })
+    );
+    sphere.castShadow = true;
+    sphere.position.copy(position);
+    scene.add(sphere);
+    // cannon js body
+    const shape = new cannon.Sphere(radius);
+    const body = new cannon.Body({
+        mass: 1,
+        position: new cannon.Vec3(0, 3, 0),
+        shape,
+        material: plasticMaterial,
+    });
+    body.position.copy(position);
+    world.addBody(body);
+};
+
+createSphere(0.5, { x: 0, y: 3, z: 0 });
 /**
  * Animate
  */
@@ -182,10 +184,8 @@ const tick = () => {
     // Update controls
     controls.update();
     // update physics world
-    sphereBody.applyForce(new cannon.Vec3(-0.5, 0, 0), sphereBody.position);
     world.step(1 / 60, deltaTime, 3);
 
-    sphere.position.copy(sphereBody.position);
 
     // Render
     renderer.render(scene, camera);
