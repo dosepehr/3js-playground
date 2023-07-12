@@ -21,9 +21,17 @@ parameters.createBox = () => {
         z: (Math.random() - 0.5) * 3,
     });
 };
+parameters.reset = () => {
+    for (const object of objectsToUpdate) {
+        object.body.removeEventListener('collide');
+        world.removeBody(object.body);
+        scene.remove(object.mesh)
+    }
+};
 const gui = new dat.GUI();
 gui.add(parameters, 'createSphere');
 gui.add(parameters, 'createBox');
+gui.add(parameters, 'reset');
 /**
  * Base
  */
