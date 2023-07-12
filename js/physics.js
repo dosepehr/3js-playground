@@ -118,6 +118,10 @@ const sphereBody = new cannon.Body({
     position: new cannon.Vec3(0, 3, 0),
     shape: sphereShape,
 });
+const floorShape = new cannon.Plane();
+const floorBody = new cannon.Body({ mass: 0, shape: floorShape });
+floorBody.quaternion.setFromAxisAngle(new cannon.Vec3(-1, 0, 0), Math.PI * 0.5);
+world.addBody(floorBody);
 world.addBody(sphereBody);
 
 // Base camera
@@ -161,7 +165,7 @@ const tick = () => {
     world.step(1 / 60, deltaTime, 3);
 
     sphere.position.copy(sphereBody.position);
-    
+
     // Render
     renderer.render(scene, camera);
 
