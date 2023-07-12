@@ -109,10 +109,22 @@ window.addEventListener('resize', () => {
 });
 
 /**
- * Camera
+ * sound
  */
+const hitSound = new Audio('/sounds/hit.mp3');
+const playHitSound = (collision) => {
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+
+    if (impactStrength > 1.5) {
+        hitSound.volume = Math.random();
+        hitSound.currentTime = 0;
+        hitSound.play();
+    }
+};
 // world
 const world = new cannon.World();
+world.broadphase = new cannon.SAPBroadphase(world);
+world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
 // sphere
 
@@ -212,6 +224,7 @@ const createSphere = (radius, position) => {
         material: plasticMaterial,
     });
     body.position.copy(position);
+    body.addEventListener('collide', playHitSound);
     world.addBody(body);
     objectsToUpdate.push({
         mesh: sphere,
