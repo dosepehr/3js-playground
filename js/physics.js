@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as dat from 'dat.gui';
-import cannon from 'cannon';
+import * as cannon from 'cannon-es';
 
 /**
  * Debug
@@ -25,7 +25,7 @@ parameters.reset = () => {
     for (const object of objectsToUpdate) {
         object.body.removeEventListener('collide');
         world.removeBody(object.body);
-        scene.remove(object.mesh)
+        scene.remove(object.mesh);
     }
 };
 const gui = new dat.GUI();
