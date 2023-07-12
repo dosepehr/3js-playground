@@ -145,6 +145,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+const objectsToUpdate = [];
+
 const createSphere = (radius, position) => {
     // 3js part
     const sphere = new THREE.Mesh(
@@ -168,6 +170,10 @@ const createSphere = (radius, position) => {
     });
     body.position.copy(position);
     world.addBody(body);
+    objectsToUpdate.push({
+        mesh: sphere,
+        body,
+    });
 };
 
 createSphere(0.5, { x: 0, y: 3, z: 0 });
@@ -185,8 +191,9 @@ const tick = () => {
     controls.update();
     // update physics world
     world.step(1 / 60, deltaTime, 3);
-
-
+    for (const object of objectsToUpdate) {
+        object.mesh.position.copy(object.body.position);
+    }
     // Render
     renderer.render(scene, camera);
 
