@@ -108,9 +108,17 @@ window.addEventListener('resize', () => {
 /**
  * Camera
  */
-
-
-
+// world
+const world = new cannon.World();
+world.gravity.set(0, -9.82, 0);
+// sphere
+const sphereShape = new cannon.Sphere(0.5);
+const sphereBody = new cannon.Body({
+    mass: 1,
+    position: new cannon.Vec3(0, 3, 0),
+    shape: sphereShape,
+});
+world.addBody(sphereBody);
 
 // Base camera
 const camera = new THREE.PerspectiveCamera(
