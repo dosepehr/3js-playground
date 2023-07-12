@@ -118,11 +118,27 @@ const sphereBody = new cannon.Body({
     position: new cannon.Vec3(0, 3, 0),
     shape: sphereShape,
 });
+
 const floorShape = new cannon.Plane();
 const floorBody = new cannon.Body({ mass: 0, shape: floorShape });
 floorBody.quaternion.setFromAxisAngle(new cannon.Vec3(-1, 0, 0), Math.PI * 0.5);
 world.addBody(floorBody);
 world.addBody(sphereBody);
+
+// material
+const concreteMaterial = new cannon.Material('concrete');
+const plasticMaterial = new cannon.Material('plastic');
+sphereBody.material = plasticMaterial;
+floorBody.material = concreteMaterial;
+const concretePlastciContcatMaterial = new cannon.ContactMaterial(
+    concreteMaterial,
+    plasticMaterial,
+    {
+        friction: 0.1,
+        restitution: 0.7,
+    }
+);
+world.addContactMaterial(concretePlastciContcatMaterial);
 
 // Base camera
 const camera = new THREE.PerspectiveCamera(
