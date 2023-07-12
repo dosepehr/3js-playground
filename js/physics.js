@@ -14,8 +14,16 @@ parameters.createSphere = () => {
         z: (Math.random() - 0.5) * 3,
     });
 };
+parameters.createBox = () => {
+    createBox(Math.random(), Math.random(), Math.random(), {
+        x: (Math.random() - 0.5) * 3,
+        y: 3,
+        z: (Math.random() - 0.5) * 3,
+    });
+};
 const gui = new dat.GUI();
 gui.add(parameters, 'createSphere');
+gui.add(parameters, 'createBox');
 /**
  * Base
  */
@@ -153,17 +161,45 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const objectsToUpdate = [];
-
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+const sphereMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
+});
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
+});
+const createBox = (width, height, depth, position) => {
+    // 3js
+    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+    box.scale.set(width, height, depth);
+    box.castShadow = true;
+    box.position.copy(position);
+    scene.add(box);
+    // physics
+    const boxShape = new cannon.Box(
+        new cannon.Vec3(width * 0.5, height * 0.5, depth * 0.5)
+    );
+    const body = new cannon.Body({
+        mass: 1,
+        position: new cannon.Vec3(0, 3, 0),
+        shape: boxShape,
+        material: plasticMaterial,
+    });
+    body.position.copy(position);
+    objectsToUpdate.push({ mesh: box, body });
+    world.addBody(body);
+};
+createBox(1, 1, 1, { x: 1, y: 1, z: 1 });
 const createSphere = (radius, position) => {
     // 3js part
-    const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(radius, 20, 20),
-        new THREE.MeshStandardMaterial({
-            metalness: 0.3,
-            roughness: 0.4,
-            envMap: environmentMapTexture,
-        })
-    );
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.scale.set(radius, radius, radius);
+
     sphere.castShadow = true;
     sphere.position.copy(position);
     scene.add(sphere);
@@ -200,6 +236,7 @@ const tick = () => {
     world.step(1 / 60, deltaTime, 3);
     for (const object of objectsToUpdate) {
         object.mesh.position.copy(object.body.position);
+        object.mesh.quaternion.copy(object.body.quaternion);
     }
     // Render
     renderer.render(scene, camera);
