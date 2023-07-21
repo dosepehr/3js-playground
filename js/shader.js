@@ -13,6 +13,17 @@ const camera = new THREE.PerspectiveCamera(75, sizes.w / sizes.h);
 camera.position.set(0, 0, 2);
 scene.add(camera);
 
+const planeGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
+
+const count = planeGeometry.attributes.position.count;
+const randoms = new Float32Array(count);
+
+for (let i = 0; i < count; i++) {
+    randoms[i] = Math.random();
+}
+
+planeGeometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
 const planeMaterial = new THREE.RawShaderMaterial({
     vertexShader,
     fragmentShader,
