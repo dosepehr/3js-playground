@@ -31,6 +31,7 @@ const planeMaterial = new THREE.RawShaderMaterial({
     side: THREE.DoubleSide,
     uniforms: {
         uFrequency: { value: new THREE.Vector2(10, 5) },
+        uTime: { value: 0 },
     },
 });
 
@@ -47,10 +48,14 @@ renderer.setSize(sizes.w, sizes.h);
 
 const control = new OrbitControls(camera, canvas);
 control.enableDamping = true;
+const clock = new THREE.Clock();
 const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
     control.update();
     window.requestAnimationFrame(tick);
     renderer.render(scene, camera);
+
+    planeMaterial.uniforms.uTime.value = elapsedTime;
 };
 
 tick();
