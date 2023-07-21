@@ -10,6 +10,9 @@ const sizes = {
     h: window.innerHeight,
 };
 
+const textureLoader = new THREE.TextureLoader();
+const frenchFlag = textureLoader.load('../textures/flag-french.jpg');
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, sizes.w / sizes.h);
 camera.position.set(0, 0, 2);
@@ -34,6 +37,7 @@ const planeMaterial = new THREE.RawShaderMaterial({
         uFrequency: { value: new THREE.Vector2(10, 5) },
         uTime: { value: 0 },
         uColor: { value: new THREE.Color('#f0f') },
+        uTexture: { value: frenchFlag },
     },
 });
 
