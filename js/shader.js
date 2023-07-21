@@ -13,10 +13,10 @@ const camera = new THREE.PerspectiveCamera(75, sizes.w / sizes.h);
 camera.position.set(0, 0, 2);
 scene.add(camera);
 
-const planeGeometry = new THREE.PlaneGeometry(1, 1);
 const planeMaterial = new THREE.RawShaderMaterial({
     vertexShader,
     fragmentShader,
+    side: THREE.DoubleSide,
 });
 
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
