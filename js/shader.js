@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 const canvas = document.querySelector('canvas.webgl');
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import dat from 'dat.gui';
 
 import fragmentShader from '../shaders/fragment.glsl';
 import vertexShader from '../shaders/vertex.glsl';
@@ -28,7 +29,14 @@ const planeMaterial = new THREE.RawShaderMaterial({
     vertexShader,
     fragmentShader,
     side: THREE.DoubleSide,
+    uniforms: {
+        uFrequency: { value: new THREE.Vector2(10, 5) },
+    },
 });
+
+const gui = new dat.GUI();
+gui.add(planeMaterial.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01);
+gui.add(planeMaterial.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01);
 
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
