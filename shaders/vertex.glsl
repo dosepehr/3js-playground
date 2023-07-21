@@ -1,11 +1,5 @@
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix; // properties of camera
-uniform mat4 modelMatrix;  // (position,rotation & scale) of the mesh 
 uniform vec2 uFrequency;
 uniform float uTime;
-
-attribute vec3 position;
-attribute vec2 uv;
 
 varying vec2 vUv;
 varying float vElevation;

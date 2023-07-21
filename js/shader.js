@@ -29,7 +29,7 @@ for (let i = 0; i < count; i++) {
 
 planeGeometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
 
-const planeMaterial = new THREE.RawShaderMaterial({
+const planeMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     side: THREE.DoubleSide,
