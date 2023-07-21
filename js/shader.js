@@ -9,6 +9,7 @@ const sizes = {
     w: window.innerWidth,
     h: window.innerHeight,
 };
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, sizes.w / sizes.h);
 camera.position.set(0, 0, 2);
@@ -32,12 +33,14 @@ const planeMaterial = new THREE.RawShaderMaterial({
     uniforms: {
         uFrequency: { value: new THREE.Vector2(10, 5) },
         uTime: { value: 0 },
+        uColor: { value: new THREE.Color('#f0f') },
     },
 });
 
 const gui = new dat.GUI();
 gui.add(planeMaterial.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01);
 gui.add(planeMaterial.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01);
+gui.addColor(planeMaterial.uniforms.uColor, 'value');
 
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
