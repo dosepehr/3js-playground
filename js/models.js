@@ -13,6 +13,7 @@ const gui = new dat.GUI();
 const canvas = document.querySelector('canvas.webgl');
 
 // Scene
+let sceneReady = false;
 const scene = new THREE.Scene();
 
 /**
@@ -49,6 +50,10 @@ const loadingManager = new THREE.LoadingManager(
             gsap.to(overlayMaterial.uniforms.uAlpha, { value: 0, duration: 2 });
             gsap.to(loadingBar, { left: '100%', duration: 1 });
         }, 500);
+
+        setTimeout(() => {
+            sceneReady = true;
+        }, 2000);
     },
     // progress
     (itemUtl, itemLoaded, itemTotal) => {
@@ -71,7 +76,7 @@ const updateAllMaterials = () => {
             child.material instanceof THREE.MeshStandardMaterial
         ) {
             child.material.envMap = environmentMap;
-            child.material.envMapIntensity = 1;
+            child.material.envMapIntensity = 2.5;
             child.material.needsUpdate = true;
             child.castShadow = true;
             child.receiveShadow = true;
@@ -114,17 +119,34 @@ scene.environment = environmentMap;
 /**
  * Models
  */
-gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf) => {
+gltfLoader.load('/models/DamagedHelmet/glTF/DamagedHelmet.gltf', (gltf) => {
     // Model
     const mesh = gltf.scene;
-    mesh.scale.set(10, 10, 10);
-    mesh.position.set(0, -4, 0);
+    mesh.scale.set(2.5, 2.5, 2.5);
     mesh.rotation.y = Math.PI * 0.5;
     scene.add(mesh);
 
     // Update materials
     updateAllMaterials();
 });
+/**
+ * points
+ */
+const raycaster = new THREE.Raycaster();
+const points = [
+    {
+        position: new THREE.Vector3(1.55, 0.3, -0.6),
+        element: document.querySelector('.point-0'),
+    },
+    {
+        position: new THREE.Vector3(0.5, 0.8, -1.6),
+        element: document.querySelector('.point-1'),
+    },
+    {
+        position: new THREE.Vector3(1.6, -1.3, -0.7),
+        element: document.querySelector('.point-2'),
+    },
+];
 
 /**
  * Lights
@@ -134,7 +156,7 @@ directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.set(1024, 1024);
 directionalLight.shadow.camera.far = 15;
 directionalLight.shadow.normalBias = 0.05;
-directionalLight.position.set(0.25, 2, -2.25);
+directionalLight.position.set(0.25, 3, -2.25);
 scene.add(directionalLight);
 
 /**
@@ -183,12 +205,12 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true,
 });
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFShadowMap;
-renderer.physicallyCorrectLights = true;
+renderer.useLegacyLights = true;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMappingExposure = 3;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -202,6 +224,35 @@ const tick = () => {
 
     // Update controls
     controls.update();
+
+    // points positions
+    for (const point of points) {
+        if (sceneReady) {
+            const screenPosition = point.position.clone();
+            screenPosition.project(camera);
+            raycaster.setFromCamera(screenPosition, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+
+            if (intersects.length === 0) {
+                point.element.classList.add('visible');
+            } else {
+                const intersectionDistance = intersects[0].distance;
+                const pointDistance = point.position.distanceTo(
+                    camera.position
+                );
+
+                if (intersectionDistance < pointDistance) {
+                    point.element.classList.remove('visible');
+                } else {
+                    point.element.classList.add('visible');
+                }
+            }
+
+            const translateX = screenPosition.x * sizes.width * 0.5;
+            const translateY = -screenPosition.y * sizes.height * 0.5;
+            point.element.style.transform = `translate(${translateX}px,${translateY}px)`;
+        }
+    }
 
     // Render
     renderer.render(scene, camera);
