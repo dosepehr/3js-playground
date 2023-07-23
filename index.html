@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>03 basic scene</title>
-    <script src="./js/performance.js" type="module" defer></script>
+    <script src="./js/models.js" type="module" defer></script>
 </head>
 <style>
     * {
@@ -26,10 +26,23 @@
         bottom: 0;
         outline: none;
     }
+
+    .loading-bar {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        height: 2px;
+        background: #fff;
+        transform: scaleX(0);
+        transform-origin: top left;
+        transition: transform 0.5s ease;
+        will-change: transform;
+    }
 </style>
 
 <body>
     <canvas class="webgl"></canvas>
+    <div class="loading-bar"></div>
 </body>
 
 </html>

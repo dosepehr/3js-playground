@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as dat from 'dat.gui';
-
+import { gsap } from 'gsap';
 /**
  * Base
  */
@@ -16,11 +16,50 @@ const canvas = document.querySelector('canvas.webgl');
 const scene = new THREE.Scene();
 
 /**
+ * overlay
+ */
+const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
+const overlayMaterial = new THREE.ShaderMaterial({
+    transparent: true,
+    uniforms: {
+        uAlpha: { value: 1 },
+    },
+    vertexShader: `
+    void main(){
+        gl_Position =  vec4(position,1.0);
+    }
+    `,
+    fragmentShader: `
+    uniform float uAlpha;
+    void main(){
+        gl_FragColor= vec4(0.0,0.0,0.0,uAlpha);
+    }
+    `,
+});
+const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
+scene.add(overlay);
+/**
  * Loaders
  */
-const textureLoader = new THREE.TextureLoader();
-const gltfLoader = new GLTFLoader();
-const cubeTextureLoader = new THREE.CubeTextureLoader();
+const loadingBar = document.querySelector('.loading-bar');
+const loadingManager = new THREE.LoadingManager(
+    // loaded
+    () => {
+        setTimeout(() => {
+            gsap.to(overlayMaterial.uniforms.uAlpha, { value: 0, duration: 2 });
+            gsap.to(loadingBar, { left: '100%', duration: 1 });
+        }, 500);
+    },
+    // progress
+    (itemUtl, itemLoaded, itemTotal) => {
+        console.log('progress');
+        loadingBar.style.transform = `scaleX(${itemLoaded / itemTotal})`;
+    }
+);
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const gltfLoader = new GLTFLoader(loadingManager);
+const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
 
 /**
  * Update all materials
@@ -31,6 +70,7 @@ const updateAllMaterials = () => {
             child instanceof THREE.Mesh &&
             child.material instanceof THREE.MeshStandardMaterial
         ) {
+            child.material.envMap = environmentMap;
             child.material.envMapIntensity = 1;
             child.material.needsUpdate = true;
             child.castShadow = true;
@@ -60,25 +100,26 @@ scene.environment = environmentMap;
  */
 
 // Textures
-const mapTexture = textureLoader.load('/models/LeePerrySmith/color.jpg');
-mapTexture.colorSpace = THREE.SRGBColorSpace;
+// const mapTexture = textureLoader.load('/models/LeePerrySmith/color.jpg');
+// mapTexture.colorSpace = THREE.SRGBColorSpace;
 
-const normalTexture = textureLoader.load('/models/LeePerrySmith/normal.jpg');
+// const normalTexture = textureLoader.load('/models/LeePerrySmith/normal.jpg');
 
-// Material
-const material = new THREE.MeshStandardMaterial({
-    map: mapTexture,
-    normalMap: normalTexture,
-});
+// // Material
+// const material = new THREE.MeshStandardMaterial({
+//     map: mapTexture,
+//     normalMap: normalTexture,
+// });
 
 /**
  * Models
  */
-gltfLoader.load('/models/LeePerrySmith/LeePerrySmith.glb', (gltf) => {
+gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf) => {
     // Model
-    const mesh = gltf.scene.children[0];
+    const mesh = gltf.scene;
+    mesh.scale.set(10, 10, 10);
+    mesh.position.set(0, -4, 0);
     mesh.rotation.y = Math.PI * 0.5;
-    mesh.material = material;
     scene.add(mesh);
 
     // Update materials
