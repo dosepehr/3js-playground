@@ -3,6 +3,7 @@
         "cannon-es": "^0.20.0",
         "dat.gui": "^0.7.9",
         "gsap": "^3.12.2",
+        "stats.js": "^0.17.0",
         "stylus": "^0.59.0",
         "three": "^0.154.0",
         "vite-plugin-glsl": "^1.1.2"
